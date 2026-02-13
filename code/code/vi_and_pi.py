@@ -25,7 +25,7 @@ def bellman_backup(state, action, R, T, gamma, V):
     backup_val = 0.
     ############################
     # YOUR IMPLEMENTATION HERE #
-
+    backup_val = R[state, action] + gamma * np.sum(T[state, action] * V)
     ############################
 
     return backup_val
@@ -50,7 +50,15 @@ def policy_evaluation(policy, R, T, gamma, tol=1e-3):
 
     ############################
     # YOUR IMPLEMENTATION HERE #
-
+    while True:
+        delta = 0
+        for s in range(num_states):
+            v = value_function[s]
+            a = policy[s]
+            value_function[s] = bellman_backup(s, a, R, T, gamma, value_function)
+            delta = max(delta, abs(v - value_function[s]))
+        if delta < tol:
+            break
     ############################
     return value_function
 
@@ -75,7 +83,11 @@ def policy_improvement(policy, R, T, V_policy, gamma):
 
     ############################
     # YOUR IMPLEMENTATION HERE #
-
+    for s in range(num_states):
+        action_values = np.zeros(num_actions)
+        for a in range(num_actions):
+            action_values[a] = bellman_backup(s, a, R, T, gamma, V_policy)
+        new_policy[s] = np.argmax(action_values)
     ############################
     return new_policy
 
@@ -102,7 +114,12 @@ def policy_iteration(R, T, gamma, tol=1e-3):
     policy = np.zeros(num_states, dtype=int)
     ############################
     # YOUR IMPLEMENTATION HERE #
-
+    while True:
+        V_policy = policy_evaluation(policy, R, T, gamma, tol)
+        new_policy = policy_improvement(policy, R, T, V_policy, gamma)
+        if np.array_equal(new_policy, policy):
+            break
+        policy = new_policy
     ############################
     return V_policy, policy
 
@@ -126,7 +143,23 @@ def value_iteration(R, T, gamma, tol=1e-3):
     policy = np.zeros(num_states, dtype=int)
     ############################
     # YOUR IMPLEMENTATION HERE #
+    while True:
+        delta = 0
+        for s in range(num_states):
+            v = value_function[s]
+            action_values = np.zeros(num_actions)
+            for a in range(num_actions):
+                action_values[a] = bellman_backup(s, a, R, T, gamma, value_function)
+            value_function[s] = np.max(action_values)
+            delta = max(delta, abs(v - value_function[s]))
+        if delta < tol:
+            break
 
+    for s in range(num_states):
+        action_values = np.zeros(num_actions)
+        for a in range(num_actions):
+            action_values[a] = bellman_backup(s, a, R, T, gamma, value_function)
+        policy[s] = np.argmax(action_values)
     ############################
     return value_function, policy
 
