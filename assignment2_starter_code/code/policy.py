@@ -72,6 +72,8 @@ class CategoricalPolicy(BasePolicy, nn.Module):
         """
         #######################################################
         #########   YOUR CODE HERE - 1-2 lines.    ############
+        logits = self.network(observations)
+        distribution = ptd.Categorical(logits=logits)
 
         #######################################################
         #########          END YOUR CODE.          ############
