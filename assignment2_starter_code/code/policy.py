@@ -43,7 +43,9 @@ class BasePolicy:
         observations = np2torch(observations)
         #######################################################
         #########   YOUR CODE HERE - 1-4 lines.    ############
-
+        dist = self.action_distribution(observations)
+        sampled_actions = dist.sample()
+        log_probs = dist.log_prob(sampled_actions)
         #######################################################
         #########          END YOUR CODE.          ############
         if return_log_prob:
