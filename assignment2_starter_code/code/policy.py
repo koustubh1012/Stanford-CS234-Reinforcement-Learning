@@ -47,7 +47,7 @@ class BasePolicy:
         sampled_actions = dist.sample()
         log_probs = dist.log_prob(sampled_actions)
         sampled_actions = sampled_actions.cpu().numpy()
-        log_probs = log_probs.cpu().numpy()
+        log_probs = log_probs.detach().cpu().numpy()
         #######################################################
         #########          END YOUR CODE.          ############
         if return_log_prob:
